@@ -9,11 +9,16 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func loadEnvFile() error {
+	_, b, _, _ := runtime.Caller(0)
+
+	// Root folder of this project
+	rootProject := filepath.Join(filepath.Dir(b), "../..")
 	// Construct the absolute path to the .env file in the Docker folder
-	envFilePath := filepath.Join("../..", "docker", ".env")
+	envFilePath := filepath.Join(rootProject, "docker", ".env")
 
 	// Load environment variables from .env file
 	if err := godotenv.Load(envFilePath); err != nil {

@@ -1,24 +1,49 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"interview/pkg/controller"
 	"interview/pkg/db"
 	"log"
 	"net/http"
 	"os"
+
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"interview/pkg/controller"
 	"path/filepath"
 	"runtime"
 )
+
+var ProjectDir string
+
+func main() {
+	// load env file
+	if err := loadEnvFile(); err != nil {
+		log.Fatalf("Error during initialization: %v", err)
+	}
+	// get application routes
+	routes := routes()
+
+	db.MigrateDatabase()
+
+	srv := &http.Server{
+		Addr:    ":" + os.Getenv("LISTEN_PORT"),
+		Handler: routes,
+	}
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		fmt.Println("server error:", err)
+	}
+}
 
 func loadEnvFile() error {
 	_, b, _, _ := runtime.Caller(0)
 
 	// Root folder of this project
-	rootProject := filepath.Join(filepath.Dir(b), "../..")
+	ProjectDir = filepath.Join(filepath.Dir(b), "../..")
 	// Construct the absolute path to the .env file in the Docker folder
-	envFilePath := filepath.Join(rootProject, "docker", ".env")
+	envFilePath := filepath.Join(ProjectDir, "docker", ".env")
 
 	// Load environment variables from .env file
 	if err := godotenv.Load(envFilePath); err != nil {
@@ -38,22 +63,4 @@ func routes() *gin.Engine {
 	ginEngine.GET("/remove-cart-item", cartController.DeleteCartItem)
 
 	return ginEngine
-}
-
-func main() {
-	// load env file
-	if err := loadEnvFile(); err != nil {
-		log.Fatalf("Error during initialization: %v", err)
-	}
-	// get application routes
-	routes := routes()
-
-	db.MigrateDatabase()
-
-	srv := &http.Server{
-		Addr:    ":" + os.Getenv("LISTEN_PORT"),
-		Handler: routes,
-	}
-
-	srv.ListenAndServe()
 }

@@ -22,8 +22,16 @@ func main() {
 	if err := loadEnvFile(); err != nil {
 		log.Fatalf("Error during initialization: %v", err)
 	}
+	ginEngine := gin.Default()
+
+	// create a new instance of the cart service
+	cartService := service.NewCartService(repository.NewMySQLDatabase())
+
+	// create a new instance of the cart controller
+	cartController := controller.NewCartController(&cartService)
+
 	// get application routes
-	routes := routes()
+	routes := routes(ginEngine, &cartService, &cartController)
 
 	repository.NewMySQLDatabase().MigrateDatabase()
 
@@ -55,14 +63,11 @@ func loadEnvFile() error {
 	return nil
 }
 
-func routes() *gin.Engine {
-	ginEngine := gin.Default()
-	cartService := service.NewCartService(repository.NewMySQLDatabase())
-	cartController := controller.NewCartController(&cartService)
+func routes(engine *gin.Engine, cartService *service.CartService, cartController *controller.CartController) *gin.Engine {
 
-	ginEngine.GET("/", cartController.ShowAddItemForm)
-	ginEngine.POST("/add-item", cartController.AddItem)
-	ginEngine.GET("/remove-cart-item", cartController.DeleteCartItem)
+	engine.GET("/", cartController.ShowAddItemForm)
+	engine.POST("/add-item", cartController.AddItem)
+	engine.GET("/remove-cart-item", cartController.DeleteCartItem)
 
-	return ginEngine
+	return engine
 }

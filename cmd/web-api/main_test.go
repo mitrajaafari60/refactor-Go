@@ -2,6 +2,9 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"interview/pkg/controller"
+	"interview/pkg/repository"
+	"interview/pkg/service"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -45,6 +48,7 @@ func TestLoadEnvFile(t *testing.T) {
 		t.Errorf("Expected TEST_VAR=test_value, got %s", testVar)
 	}
 }
+
 func TestRoutes(t *testing.T) {
 	var registered = []struct {
 		route  string
@@ -54,8 +58,11 @@ func TestRoutes(t *testing.T) {
 		{"/remove-cart-item", "GET"},
 		{"/add-item", "POST"},
 	}
-
-	mux := routes()
+	ginEngine := gin.Default()
+	db := repository.NewMockDatabase()
+	cartService := service.NewCartService(db)
+	cartController := controller.NewCartController(&cartService)
+	mux := routes(ginEngine, &cartService, &cartController)
 
 	for _, route := range registered {
 		// check to see if the route exists

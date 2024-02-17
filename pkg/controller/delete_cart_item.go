@@ -9,7 +9,7 @@ import (
 )
 
 func (cc *CartController) DeleteCartItem(c *gin.Context) {
-	cookie, err := c.Request.Cookie("ice_session_id")
+	cookie, err := c.Request.Cookie(ICE_SESSION_ID)
 
 	if err != nil || errors.Is(err, http.ErrNoCookie) || (cookie != nil && cookie.Value == "") {
 		cc.RedirectTo(c, "/")

@@ -9,9 +9,11 @@ import (
 type CartController struct {
 }
 
+const ICE_SESSION_ID = "ice_session_id"
+
 // setNewSessionCookie sets a new session cookie.
 func (cc *CartController) SetNewSessionCookie(c *gin.Context) {
-	c.SetCookie("ice_session_id", time.Now().String(), 3600, "/", "localhost", false, true)
+	c.SetCookie(ICE_SESSION_ID, time.Now().String(), 3600, "/", "localhost", false, true)
 }
 
 // RedirectTo redirects to the page.

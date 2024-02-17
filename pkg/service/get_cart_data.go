@@ -2,35 +2,25 @@ package service
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"interview/pkg/entity"
 	db2 "interview/pkg/repository"
-	"log"
 	"strings"
 )
 
-func GetCartData(c *gin.Context) {
+func GetCartData(sessionID string, qErr string) (string, error) {
 	data := map[string]interface{}{
-		"Error": c.Query("error"),
-		//"cartItems": cartItems,
-	}
-
-	cookie, err := c.Request.Cookie("ice_session_id")
-	if err == nil {
-		data["CartItems"] = getCartItemData(cookie.Value)
+		"Error":     qErr,
+		"CartItems": getCartItemData(sessionID),
 	}
 
 	html, err := renderTemplate(data)
 	if err != nil {
-		log.Println(err)
-		c.AbortWithStatus(500)
-		return
+		return "", err
 	}
-
-	c.Header("Content-Type", "text/html")
-	c.String(200, html)
+	return html, nil
 }
+
 func getCartItemData(sessionID string) (items []map[string]interface{}) {
 	db := db2.GetDatabase()
 	var cartEntity entity.CartEntity

@@ -26,9 +26,11 @@ func (cs *CartService) GetCartItemData(sessionID string) []map[string]interface{
 	return items
 }
 
+var pathToTemplates = "../../static/add_item_form.html"
+
 func renderTemplate(pageData interface{}) (string, error) {
 	// Read and parse the HTML template file
-	tmpl, err := template.ParseFiles("../../static/add_item_form.html")
+	tmpl, err := template.ParseFiles(pathToTemplates)
 	if err != nil {
 		return "", fmt.Errorf("Error parsing template: %v ", err)
 	}

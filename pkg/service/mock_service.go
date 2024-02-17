@@ -1,39 +1,37 @@
 package service
 
-import "interview/pkg/repository"
+import (
+	"errors"
+)
 
-// MockCartService is a mock implementation of CartServiceInterface.
+func NewMockCartService() CartServiceInterface {
+	return &MockCartService{}
+}
+
 type MockCartService struct {
-	RepoMock repository.Database
 }
 
-// NewMockCartService creates a new instance of MockCartService.
-func NewMockCartService(repoMock repository.Database) *MockCartService {
-	return &MockCartService{
-		RepoMock: repoMock,
+func (s *MockCartService) GetCartData(sessionID string, qErr string) (string, error) {
+	data := map[string]interface{}{
+		"Error":     qErr,
+		"CartItems": s.GetCartItemData(sessionID),
 	}
+	return renderTemplate(data)
 }
 
-// GetCartData is a mock implementation for testing purposes.
-func (m *MockCartService) GetCartData(sessionID string, qErr string) (string, error) {
-	// Mock implementation goes here
-	return "", nil
-}
-
-// AddItemToCart is a mock implementation for testing purposes.
-func (m *MockCartService) AddItemToCart(sessionID string, product string, quantity int64) error {
-	// Mock implementation goes here
+func (s *MockCartService) AddItemToCart(sessionID string, product string, quantity int64) error {
+	_, ok := itemPriceMapping[product]
+	if !ok {
+		return errors.New("invalid item name")
+	}
 	return nil
 }
 
-// DeleteItem is a mock implementation for testing purposes.
-func (m *MockCartService) DeleteItem(sessionID string, cartItemID int) error {
-	// Mock implementation goes here
+func (s *MockCartService) DeleteItem(sessionID string, cartItemID int) error {
 	return nil
 }
 
-// GetCartItemData is a mock implementation for testing purposes.
-func (m *MockCartService) GetCartItemData(sessionID string) (items []map[string]interface{}) {
-	// Mock implementation goes here
+func (s *MockCartService) GetCartItemData(sessionID string) (items []map[string]interface{}) {
+
 	return nil
 }

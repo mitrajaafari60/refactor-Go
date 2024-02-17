@@ -16,7 +16,6 @@ func (cc *CartController) AddItem(c *gin.Context) {
 		cc.RedirectTo(c, "/")
 		return
 	}
-
 	if c.Request.Body == nil {
 		cc.RedirectTo(c, "/?error="+"body cannot be nil")
 		return

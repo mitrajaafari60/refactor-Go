@@ -1,50 +1,33 @@
 package service
 
 import (
+	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"interview/pkg/entity"
 	db2 "interview/pkg/repository"
-	"strconv"
 )
 
-func DeleteCartItem(c *gin.Context) {
-	cartItemIDString := c.Query("cart_item_id")
-	if cartItemIDString == "" {
-		c.Redirect(302, "/")
-		return
-	}
-
-	cookie, _ := c.Request.Cookie("ice_session_id")
+func DeleteCartItem(sessionID string, cartItemID int) error {
 
 	db := db2.GetDatabase()
 
 	var cartEntity entity.CartEntity
-	result := db.Where(fmt.Sprintf("status = '%s' AND session_id = '%s'", entity.CartOpen, cookie.Value)).First(&cartEntity)
+	result := db.Where(fmt.Sprintf("status = '%s' AND session_id = '%s'", entity.CartOpen, sessionID)).First(&cartEntity)
 	if result.Error != nil {
-		c.Redirect(302, "/")
-		return
+		return result.Error
 	}
 
 	if cartEntity.Status == entity.CartClosed {
-		c.Redirect(302, "/")
-		return
-	}
-
-	cartItemID, err := strconv.Atoi(cartItemIDString)
-	if err != nil {
-		c.Redirect(302, "/")
-		return
+		return errors.New("CartClosed")
 	}
 
 	var cartItemEntity entity.CartItem
 
 	result = db.Where(" ID  = ?", cartItemID).First(&cartItemEntity)
 	if result.Error != nil {
-		c.Redirect(302, "/")
-		return
+		return result.Error
 	}
 
 	db.Delete(&cartItemEntity)
-	c.Redirect(302, "/")
+	return nil
 }

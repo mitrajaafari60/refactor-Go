@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"interview/pkg/service"
 	"net/http"
+	"strconv"
 )
 
 func (cc *CartController) DeleteCartItem(c *gin.Context) {
@@ -14,6 +15,22 @@ func (cc *CartController) DeleteCartItem(c *gin.Context) {
 		cc.RedirectTo(c, "/")
 		return
 	}
+	cartItemIDString := c.Query("cart_item_id")
+	if cartItemIDString == "" {
+		cc.RedirectTo(c, "/")
+		return
+	}
 
-	service.DeleteCartItem(c)
+	cartItemID, err := strconv.Atoi(cartItemIDString)
+	if err != nil {
+		cc.RedirectTo(c, "/")
+		return
+	}
+	err = service.DeleteCartItem(cookie.Value, cartItemID)
+	if err != nil {
+		cc.RedirectTo(c, "/")
+		return
+	}
+	cc.RedirectTo(c, "/")
+
 }

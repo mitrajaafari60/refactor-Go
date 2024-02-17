@@ -34,7 +34,7 @@ func (cc *CartController) AddItem(c *gin.Context) {
 		return
 	}
 
-	err = service.AddItemToCart(cookie.Value, form.Product, quantity)
+	err = cc.CartService.AddItemToCart(cookie.Value, form.Product, quantity)
 	if err != nil {
 		cc.RedirectTo(c, "/?error="+err.Error())
 		return

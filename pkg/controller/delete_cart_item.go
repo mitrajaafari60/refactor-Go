@@ -3,7 +3,6 @@ package controller
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"interview/pkg/service"
 	"net/http"
 	"strconv"
 )
@@ -26,7 +25,7 @@ func (cc *CartController) DeleteCartItem(c *gin.Context) {
 		cc.RedirectTo(c, "/")
 		return
 	}
-	err = service.DeleteCartItem(cookie.Value, cartItemID)
+	err = cc.CartService.DeleteItem(cookie.Value, cartItemID)
 	if err != nil {
 		cc.RedirectTo(c, "/")
 		return

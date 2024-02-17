@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"interview/pkg/controller"
+	"interview/pkg/service"
 	"path/filepath"
 	"runtime"
 )
@@ -24,7 +25,7 @@ func main() {
 	// get application routes
 	routes := routes()
 
-	repository.MigrateDatabase()
+	repository.NewMySQLDatabase().MigrateDatabase()
 
 	srv := &http.Server{
 		Addr:    ":" + os.Getenv("LISTEN_PORT"),
@@ -56,8 +57,9 @@ func loadEnvFile() error {
 
 func routes() *gin.Engine {
 	ginEngine := gin.Default()
+	cartService := service.NewCartService(repository.NewMySQLDatabase())
+	cartController := controller.NewCartController(&cartService)
 
-	var cartController controller.CartController
 	ginEngine.GET("/", cartController.ShowAddItemForm)
 	ginEngine.POST("/add-item", cartController.AddItem)
 	ginEngine.GET("/remove-cart-item", cartController.DeleteCartItem)

@@ -3,49 +3,26 @@ package service
 import (
 	"fmt"
 	"html/template"
-	"interview/pkg/entity"
-	db2 "interview/pkg/repository"
 	"strings"
 )
 
-func GetCartData(sessionID string, qErr string) (string, error) {
+// GetCartData retrieves cart data based on the sessionID.
+func (cs *CartService) GetCartData(sessionID string, qErr string) (string, error) {
 	data := map[string]interface{}{
 		"Error":     qErr,
-		"CartItems": getCartItemData(sessionID),
+		"CartItems": cs.GetCartItemData(sessionID),
 	}
 
-	html, err := renderTemplate(data)
-	if err != nil {
-		return "", err
-	}
-	return html, nil
+	return renderTemplate(data)
 }
 
-func getCartItemData(sessionID string) (items []map[string]interface{}) {
-	db := db2.GetDatabase()
-	var cartEntity entity.CartEntity
-	result := db.Where(fmt.Sprintf("status = '%s' AND session_id = '%s'", entity.CartOpen, sessionID)).First(&cartEntity)
-
-	if result.Error != nil {
-		return
+// getCartItemData retrieves cart item data based on the sessionID.
+func (cs *CartService) GetCartItemData(sessionID string) []map[string]interface{} {
+	items, err := cs.repo.GetCartData(sessionID)
+	if err != nil {
+		return nil
 	}
 
-	var cartItems []entity.CartItem
-	result = db.Where(fmt.Sprintf("cart_id = %d", cartEntity.ID)).Find(&cartItems)
-	if result.Error != nil {
-		return
-	}
-
-	for _, cartItem := range cartItems {
-		item := map[string]interface{}{
-			"ID":       cartItem.ID,
-			"Quantity": cartItem.Quantity,
-			"Price":    cartItem.Price,
-			"Product":  cartItem.ProductName,
-		}
-
-		items = append(items, item)
-	}
 	return items
 }
 

@@ -1,4 +1,4 @@
-package calculator
+package service
 
 import (
 	"errors"
@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm"
-	db2 "interview/pkg/db"
 	"interview/pkg/entity"
+	db2 "interview/pkg/repository"
 	"log"
 	"strconv"
 )

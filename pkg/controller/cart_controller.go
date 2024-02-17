@@ -3,7 +3,7 @@ package controller
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"interview/pkg/calculator"
+	"interview/pkg/service"
 	"net/http"
 	"time"
 )
@@ -17,7 +17,7 @@ func (t *CartController) ShowAddItemForm(c *gin.Context) {
 		c.SetCookie("ice_session_id", time.Now().String(), 3600, "/", "localhost", false, true)
 	}
 
-	calculator.GetCartData(c)
+	service.GetCartData(c)
 }
 
 func (t *CartController) AddItem(c *gin.Context) {
@@ -28,7 +28,7 @@ func (t *CartController) AddItem(c *gin.Context) {
 		return
 	}
 
-	calculator.AddItemToCart(c)
+	service.AddItemToCart(c)
 }
 
 func (t *CartController) DeleteCartItem(c *gin.Context) {
@@ -39,5 +39,5 @@ func (t *CartController) DeleteCartItem(c *gin.Context) {
 		return
 	}
 
-	calculator.DeleteCartItem(c)
+	service.DeleteCartItem(c)
 }

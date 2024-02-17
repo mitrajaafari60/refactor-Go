@@ -1,11 +1,11 @@
-package calculator
+package service
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"html/template"
-	db2 "interview/pkg/db"
 	"interview/pkg/entity"
+	db2 "interview/pkg/repository"
 	"log"
 	"strings"
 )

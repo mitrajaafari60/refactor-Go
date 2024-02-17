@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"interview/pkg/db"
+	"interview/pkg/repository"
 	"log"
 	"net/http"
 	"os"
@@ -24,7 +24,7 @@ func main() {
 	// get application routes
 	routes := routes()
 
-	db.MigrateDatabase()
+	repository.MigrateDatabase()
 
 	srv := &http.Server{
 		Addr:    ":" + os.Getenv("LISTEN_PORT"),

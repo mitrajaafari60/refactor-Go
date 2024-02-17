@@ -1,15 +1,38 @@
 package repository
 
 import (
+	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
 	"interview/pkg/entity"
 )
 
 // MockDatabase is a mock implementation of the Database interface for testing purposes.
 type MockDatabase struct {
+	mock.Mock
 	CartEntities  map[string]*entity.CartEntity
 	CartItems     map[uint]*entity.CartItem
 	CartItemIndex uint
+	CustomError   error
+}
+
+func (m *MockDatabase) GetCartData(sessionID string) ([]map[string]interface{}, error) {
+	if m.CustomError != nil {
+		return nil, m.CustomError
+	}
+	// Sample data for testing
+	item1 := map[string]interface{}{
+		"key1": "value1",
+		"key2": 42,
+	}
+
+	item2 := map[string]interface{}{
+		"key1": "value2",
+		"key2": 123.45,
+	}
+
+	var items []map[string]interface{}
+	items = append(items, item1, item2)
+	return items, nil
 }
 
 // NewMockDatabase creates a new instance of MockDatabase.
@@ -17,6 +40,15 @@ func NewMockDatabase() Database {
 	return &MockDatabase{
 		CartEntities: make(map[string]*entity.CartEntity),
 		CartItems:    make(map[uint]*entity.CartItem),
+	}
+}
+
+// NewMockDatabase creates a new instance of MockDatabase.
+func NewMockDatabaseErr(err error) Database {
+	return &MockDatabase{
+		CartEntities: make(map[string]*entity.CartEntity),
+		CartItems:    make(map[uint]*entity.CartItem),
+		CustomError:  err,
 	}
 }
 
@@ -58,9 +90,4 @@ func (d *MockDatabase) UpdateCartItem(cartItemEntity *entity.CartItem, quantity 
 func (d *MockDatabase) DeleteCartItem(sessionID string, cartItemID int) error {
 	// Mock implementation, not used in testing
 	return nil
-}
-
-func (d *MockDatabase) GetCartData(sessionID string) ([]map[string]interface{}, error) {
-	// Mock implementation, not used in testing
-	return nil, nil
 }

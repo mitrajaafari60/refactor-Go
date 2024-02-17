@@ -38,7 +38,7 @@ func (d *MockDatabase) GetOrCreateCart(sessionID string) (*entity.CartEntity, bo
 	return cart, !exists, nil
 }
 
-func (d *MockDatabase) GetOrCreateCartItem(cartID uint, product string, quantity int64, itemPrice float64) (*entity.CartItem, error) {
+func (d *MockDatabase) GetOrCreateCartItem(cartID uint, product string, quantity int64, itemPrice float64) (*entity.CartItem, bool, error) {
 	d.CartItemIndex++
 	cartItem := &entity.CartItem{
 		Model:       gorm.Model{ID: d.CartItemIndex},
@@ -48,7 +48,7 @@ func (d *MockDatabase) GetOrCreateCartItem(cartID uint, product string, quantity
 		Price:       itemPrice * float64(quantity),
 	}
 	d.CartItems[d.CartItemIndex] = cartItem
-	return cartItem, nil
+	return cartItem, false, nil
 }
 
 func (d *MockDatabase) UpdateCartItem(cartItemEntity *entity.CartItem, quantity int64, itemPrice float64) {

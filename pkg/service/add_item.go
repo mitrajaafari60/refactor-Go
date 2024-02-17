@@ -16,12 +16,13 @@ func (cs *CartService) AddItemToCart(sessionID string, product string, quantity 
 		return errors.New("invalid item name")
 	}
 
-	cartItemEntity, err := cs.repo.GetOrCreateCartItem(cartEntity.ID, product, quantity, itemPrice)
+	cartItemEntity, isNew, err := cs.repo.GetOrCreateCartItem(cartEntity.ID, product, quantity, itemPrice)
 	if err != nil {
 		return err
 	}
-
-	cs.repo.UpdateCartItem(cartItemEntity, quantity, itemPrice)
+	if !isNew {
+		cs.repo.UpdateCartItem(cartItemEntity, quantity, itemPrice)
+	}
 
 	return nil
 }

@@ -7,15 +7,14 @@ import (
 )
 
 // GetOrCreateCartItem retrieves or creates a cart item based on the cartID and product.
-func (d *MySQLDatabase) GetOrCreateCartItem(cartID uint, product string, quantity int64, itemPrice float64) (*entity.CartItem, error) {
+func (d *MySQLDatabase) GetOrCreateCartItem(cartID uint, product string, quantity int64, itemPrice float64) (*entity.CartItem, bool, error) {
 	db := d.GetDatabase()
-
 	var cartItemEntity entity.CartItem
 	result := db.Where("cart_id = ? and product_name = ?", cartID, product).First(&cartItemEntity)
 
 	if result.Error != nil {
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, result.Error
+			return nil, false, result.Error
 		}
 
 		newCartItemEntity := entity.CartItem{
@@ -26,11 +25,11 @@ func (d *MySQLDatabase) GetOrCreateCartItem(cartID uint, product string, quantit
 		}
 
 		if err := db.Create(&newCartItemEntity).Error; err != nil {
-			return nil, err
+			return nil, true, err
 		}
 
-		return &newCartItemEntity, nil
+		return &newCartItemEntity, true, nil
 	}
 
-	return &cartItemEntity, nil
+	return &cartItemEntity, false, nil
 }

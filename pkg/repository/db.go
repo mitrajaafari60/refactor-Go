@@ -12,7 +12,7 @@ type Database interface {
 	MigrateDatabase()
 	GetDatabase() *gorm.DB
 	GetOrCreateCart(sessionID string) (*entity.CartEntity, bool, error)
-	GetOrCreateCartItem(cartID uint, product string, quantity int64, itemPrice float64) (*entity.CartItem, error)
+	GetOrCreateCartItem(cartID uint, product string, quantity int64, itemPrice float64) (*entity.CartItem, bool, error)
 	UpdateCartItem(cartItemEntity *entity.CartItem, quantity int64, itemPrice float64)
 	DeleteCartItem(sessionID string, cartItemID int) error
 	GetCartData(sessionID string) ([]map[string]interface{}, error)

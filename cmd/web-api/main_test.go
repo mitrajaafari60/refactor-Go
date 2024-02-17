@@ -2,10 +2,13 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 	"interview/pkg/controller"
 	"interview/pkg/repository"
 	"interview/pkg/service"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -80,4 +83,30 @@ func routeExists(testRoute, testMethod string, ginRouter *gin.Engine) bool {
 		}
 	}
 	return found
+}
+
+func TestSetupApplication(t *testing.T) {
+	// Set up a test environment
+	gin.SetMode(gin.TestMode)
+	originalListenPort := os.Getenv("LISTEN_PORT")
+	os.Setenv("LISTEN_PORT", "8080")
+	defer func() {
+		os.Setenv("LISTEN_PORT", originalListenPort)
+	}()
+
+	// Run the setupApplication function
+	ginEngine := setupApplication()
+
+	// Perform assertions on the returned gin.Engine
+	assert.NotNil(t, ginEngine)
+
+	// Simulate a request to the "/" route
+	req, err := http.NewRequest("GET", "/", nil)
+	assert.NoError(t, err)
+
+	w := httptest.NewRecorder()
+	ginEngine.ServeHTTP(w, req)
+
+	// Check if the response status code is http.StatusOK
+	assert.Equal(t, http.StatusOK, w.Code)
 }

@@ -18,32 +18,29 @@ import (
 var ProjectDir string
 
 func main() {
+	// Initialize the application and start the HTTP server
+	startServer(setupApplication())
+}
+
+func setupApplication() *gin.Engine {
 	// load env file
 	if err := loadEnvFile(); err != nil {
 		log.Fatalf("Error during initialization: %v", err)
 	}
-	ginEngine := gin.Default()
 
 	// create a new instance of the cart service
 	cartService := service.NewCartService(repository.NewMySQLDatabase())
 
 	// create a new instance of the cart controller
 	cartController := controller.NewCartController(&cartService)
-
+	ginEngine := gin.Default()
 	// get application routes
 	routes := routes(ginEngine, &cartService, &cartController)
 
+	// Migrate database
 	repository.NewMySQLDatabase().MigrateDatabase()
 
-	srv := &http.Server{
-		Addr:    ":" + os.Getenv("LISTEN_PORT"),
-		Handler: routes,
-	}
-
-	err := srv.ListenAndServe()
-	if err != nil {
-		fmt.Println("server error:", err)
-	}
+	return routes
 }
 
 func loadEnvFile() error {
@@ -70,4 +67,16 @@ func routes(engine *gin.Engine, cartService *service.CartService, cartController
 	engine.GET("/remove-cart-item", cartController.DeleteCartItem)
 
 	return engine
+}
+
+func startServer(routs *gin.Engine) {
+	srv := &http.Server{
+		Addr:    ":" + os.Getenv("LISTEN_PORT"),
+		Handler: routs,
+	}
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		fmt.Println("server error:", err)
+	}
 }

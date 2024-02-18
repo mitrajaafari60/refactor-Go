@@ -1,41 +1,48 @@
-## Introduction
-This repository is written to test candidate's skills when it comes to writing clean and maintainable code base. In the real world, we rarely get the chance to develop our code base from scratch and most often we have to deal with the code which is either legacy or not ours. In order to write this repository, we wrote a simple tax calculator which was used to calculate the taxes you had to pay on your income. Then we remove the parts we didn't need and wrote a simple shopping cart manager. 
+# Refactored Codebase - Shopping Cart Manager
 
-## What is expected?
-We expect the candidates to refactor the code to best their abilities to make the code cleaner, testable and maintainable. To what extend the candidates want to refactor the code base is up to them but the functionality of the application **MUST REMAIN THE SAME**. The candidate is allowed to change the code base however it's needed. 
+Welcome to the refactored version of the Shopping Cart Manager codebase! This repository was initially created to test coding skills by refactoring a simple tax calculator. The tax calculator was later replaced with a shopping cart manager, and your task was to refactor the code while maintaining the functionality of the application. Below, you'll find information on the updated codebase and how to navigate and run the application.
 
-* Clone the repository
-* Make small changes, commit
-* Repeat
-* The finished work should include all the git commits whether in a repository or zip file
+# Overview
 
+The Shopping Cart Manager is a straightforward web application that allows users to interact with a shopping cart. Three main functionalities are provided:
 
-## How to run the application?
-First you need docker to build the dependencies. You can skip this part if you already have mysql on your system. All you need to do it changing MySQL credentials in `pkg/db/get_db.go`
-```
-cd docker
-docker compose up -d --build
-```
+#### Show Form: Display the form to add or remove products from the cart.
 
-Once the containers are up and ready, you can run the application:
-```
-cd cmd
-cd web-api
+#### Add Products: Add products to the shopping cart.
+
+#### Remove Products: Remove items from the shopping cart.
+
+## Changes Made
+
+Throughout the refactoring process, several improvements have been made to enhance the codebase:
+
+ Cleaner Code: The code has been refactored for improved readability, maintainability, and adherence to best practices.
+
+ Test Coverage: Comprehensive testing has been added to ensure the reliability of the code.
+
+Structural Improvements: The project structure has been organized for better clarity and separation of concerns.
+
+# Getting Started
+
+Follow these steps to run the application:
+
+Clone the Repository: Clone this repository to your local machine.
+
+Build Docker Containers: If you don't have MySQL installed locally, Docker is used to set up containers. Navigate to the docker directory and run:
+
+bash
+Copy code
+docker-compose up -d --build
+Run the Application: Once the containers are ready, navigate to cmd/web-api and execute:
+
+bash
+Copy code
 go run main.go
-```
+Access the Application: Open your browser and visit http://localhost:8088/ to interact with the application.
 
-This will run the application and a simple web server will start listening on port `8088`. By opening the http://localhost:8088/ in your browser you should be able to see the application. 
-![Shopping cart manager](static/images/application.png)
+Testing
+The refactored code includes a comprehensive set of tests. To run the tests, execute:
 
-## What it does?
-The application has three simple routes:
- * Show the form to add/remove products from cart
- * Add products to your cart
- * Remove carts from your cart  
-
- ## How we will evaluate?
- * Is the new code cleaner? 
- * Does it have tests? What kind of test?
- * If we want to extend it, how easy or hard it is?
- * Are there any security flaws? Any major performance issues? 
- * Does it work the same as before?
+bash
+Copy code
+go test ./...
